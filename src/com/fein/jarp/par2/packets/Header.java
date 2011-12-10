@@ -14,7 +14,9 @@ public class Header extends AbstractPacket {
 
 	private byte[] recoveryId;
 
-	private byte[] type;
+	private String type;
+
+	private PacketType packetType;
 
 	private BigInteger length;
 
@@ -32,6 +34,10 @@ public class Header extends AbstractPacket {
 		}
 
 		return length;
+	}
+
+	public int getLengthInt() {
+		return (int) getLength().longValue();
 	}
 
 	public byte[] getHeader() {
@@ -72,12 +78,36 @@ public class Header extends AbstractPacket {
 		return recoveryId;
 	}
 
-	public byte[] getType() {
+	public String getType() {
 		if(type == null) {
-			type = Arrays.copyOfRange(getHeader(), 48, 64);
+			type = new String(Arrays.copyOfRange(getHeader(), 48, 64));
 		}
 
 		return type;
+	}
+
+	public PacketType getPacketType() {
+		if(packetType == null) {
+			switch(getType()) {
+			case "PAR 2.0\0RecvSlic":
+				packetType = PacketType.REOCV_SLICE;
+				break;
+			case "PAR 2.0\0Creator\0":
+				packetType = PacketType.CREATOR;
+				break;
+			case "PAR 2.0\0IFSC\0\0\0\0":
+				packetType = PacketType.INPUT_FILE_SLICE_CHECKSUM;
+				break;
+			case "PAR 2.0\0FileDesc":
+				packetType = PacketType.FILE_DESC;
+				break;
+			case "PAR 2.0\0Main\0\0\0\0":
+				packetType = PacketType.MAIN_PACKET;
+				break;
+			}
+		}
+
+		return packetType;
 	}
 
 }

@@ -5,6 +5,8 @@ import java.util.Arrays;
 public class Packet {
 	private Header header;
 
+	private byte[] body;
+
 	private byte[] packet;
 
 	public Packet(byte[] packet) {
@@ -18,5 +20,15 @@ public class Packet {
 		}
 
 		return header;
+	}
+
+	public byte[] getBody() {
+		if(body == null) {
+			int size = Header.headerSize;
+			body = Arrays.copyOfRange(packet, size, getHeader().getLengthInt()
+					- size);
+		}
+
+		return body;
 	}
 }

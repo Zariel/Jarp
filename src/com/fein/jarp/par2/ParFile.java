@@ -55,7 +55,6 @@ public class ParFile {
 				}
 
 				if(found) {
-					System.out.println("Packet found @ " + offset);
 					BigInteger len = AbstractPacket.getPacketSize(buffer);
 					// TODO: Check we dont overflow long
 					int skip = (int) len.longValue();
@@ -74,9 +73,6 @@ public class ParFile {
 
 				offset += read;
 			}
-
-			System.out.println("Found = " + packets.size());
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

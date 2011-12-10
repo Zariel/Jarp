@@ -4,13 +4,13 @@ import java.math.BigInteger;
 
 public abstract class AbstractPacket {
 	public static BigInteger byteToUint8(byte[] input, int offset) {
-		return byteToUint8(input, 0, 8);
+		return byteToUint8(input, offset, 8);
 	}
 
 	public static BigInteger byteToUint8(byte[] input, int offset, int len) {
 		BigInteger num = BigInteger.ZERO;
 
-		for(int i = offset; i < input.length; i++) {
+		for(int i = offset; i < (offset + len); i++) {
 			BigInteger n = new BigInteger(
 					Integer.toString((input[i] & 0x000000ff) << (i * 8)));
 			num = num.or(n);
@@ -26,7 +26,7 @@ public abstract class AbstractPacket {
 	public static long byteToUint4(byte[] input, int offset, int len) {
 		long num = 0;
 
-		for(int i = offset; i < len; i++) {
+		for(int i = offset; i < (offset + len); i++) {
 			num |= ((input[i] & 0x000000ff) << (i * 8));
 		}
 
