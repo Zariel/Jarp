@@ -1,5 +1,7 @@
 package com.fein.jarp.par2.packets;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import com.fein.jarp.par2.packets.core.FileDesc;
@@ -11,6 +13,8 @@ public class Packet {
 	private PacketBody body;
 
 	private byte[] packet;
+
+	private byte[] packetMd5;
 
 	public Packet(byte[] packet) {
 		this.packet = packet;
@@ -46,5 +50,26 @@ public class Packet {
 		}
 
 		return body;
+	}
+
+	public byte[] getPacketMd5() {
+		if(packetMd5 == null) {
+			int off = Header.headerSize - 32;
+			byte[] data = Arrays.copyOfRange(packet, off, packet.length);
+
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				packetMd5 = md.digest(data);
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		return packetMd5;
+	}
+
+	public boolean isPacketMd5Valid() {
+		return Arrays.equals(getPacketMd5(), header.getPacketMD5());
 	}
 }
