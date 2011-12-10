@@ -12,6 +12,8 @@ import java.util.List;
 import com.fein.jarp.par2.packets.AbstractPacket;
 import com.fein.jarp.par2.packets.Header;
 import com.fein.jarp.par2.packets.Packet;
+import com.fein.jarp.par2.packets.PacketType;
+import com.fein.jarp.par2.packets.core.MainPacket;
 
 /**
  * Open a par2 file and parse it.
@@ -24,6 +26,8 @@ public class ParFile {
 	private final File file;
 
 	private List<Packet> packets;
+
+	private int numFiles = 0;
 
 	public ParFile(String file) {
 		this(new File(file));
@@ -41,10 +45,7 @@ public class ParFile {
 			// Read until we find a packet header
 			byte[] buffer = new byte[16];
 
-			int offset = 0;
-			int read = 0;
-
-			while((read = is.read(buffer, 0, 16)) > 0) {
+			while((is.read(buffer, 0, 16)) > 0) {
 				boolean found = true;
 
 				for(int i = 0; i < 8; i++) {
@@ -66,12 +67,12 @@ public class ParFile {
 					is.read(packet, 16, skip - 16);
 
 					Packet p = new Packet(packet);
+					if(p.getPacketType() == PacketType.MAIN_PACKET) {
+						numFiles = ((MainPacket) p.getBody()).getNumFiles();
+					}
+
 					packets.add(p);
-
-					offset += skip;
 				}
-
-				offset += read;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,5 +89,9 @@ public class ParFile {
 
 	public long getSize() {
 		return file.length();
+	}
+
+	public int getNumFiles() {
+		return numFiles;
 	}
 }
