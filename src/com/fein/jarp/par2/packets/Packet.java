@@ -2,10 +2,13 @@ package com.fein.jarp.par2.packets;
 
 import java.util.Arrays;
 
+import com.fein.jarp.par2.packets.core.FileDesc;
+import com.fein.jarp.par2.packets.core.MainPacket;
+
 public class Packet {
 	private Header header;
 
-	private byte[] body;
+	private PacketBody body;
 
 	private byte[] packet;
 
@@ -22,11 +25,24 @@ public class Packet {
 		return header;
 	}
 
-	public byte[] getBody() {
+	public PacketType getPacketType() {
+		return getHeader().getPacketType();
+	}
+
+	public PacketBody getBody() {
 		if(body == null) {
 			int size = Header.headerSize;
-			body = Arrays.copyOfRange(packet, size, getHeader().getLengthInt()
-					- size);
+			byte[] data = Arrays.copyOfRange(packet, size, getHeader()
+					.getLengthInt());
+
+			switch(getPacketType()) {
+			case FILE_DESC:
+				body = new FileDesc(data);
+				break;
+			case MAIN_PACKET:
+				body = new MainPacket(data);
+				break;
+			}
 		}
 
 		return body;
