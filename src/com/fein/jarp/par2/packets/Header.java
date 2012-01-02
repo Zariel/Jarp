@@ -3,7 +3,9 @@ package com.fein.jarp.par2.packets;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-public class Header extends AbstractPacket {
+import com.fein.jarp.util.ByteUtil;
+
+public class Header {
 	public static int headerSize = 64;
 
 	private byte[] header;
@@ -30,7 +32,7 @@ public class Header extends AbstractPacket {
 
 	public BigInteger getLength() {
 		if(length == null) {
-			length = getPacketSize(header);
+			length = ByteUtil.getPacketSize(header);
 		}
 
 		return length;
